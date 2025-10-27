@@ -104,7 +104,7 @@
           Zurücksetzen
         </button>
       </div>
-    
+
     <div v-if="error" class="error-message">
       {{ error }}
     </div>
@@ -120,12 +120,9 @@ import { ref, reactive, computed } from 'vue'
 import { useWerte } from '../composables/useWerte'
 import { useAuth } from '../composables/useAuth'
 
-const emit = defineEmits<{
-  werteAdded: []
-}>()
 
 const { user } = useAuth()
-const { addWert, loading, error } = useWerte()
+const { loading, error } = useWerte()
 
 const isAuthenticated = computed(() => !!user.value)
 
@@ -154,29 +151,6 @@ const resetForm = () => {
   successMessage.value = null
 }
 
-const submitForm = async () => {
-  successMessage.value = null
-
-  const result = await addWert({
-    wert_datum: formData.wert_datum,
-    wert_gewicht: formData.wert_gewicht,
-    wert_taille: formData.wert_taille,
-    wert_bauch: formData.wert_bauch,
-    wert_po: formData.wert_po,
-    wert_oberschenkel: formData.wert_oberschenkel
-  })
-
-  if (result) {
-    successMessage.value = 'Messwerte erfolgreich gespeichert!'
-    resetForm()
-    emit('werteAdded')
-
-    // Success message nach 3 Sekunden ausblenden
-    setTimeout(() => {
-      successMessage.value = null
-    }, 3000)
-  }
-}
 </script>
 
 <style scoped>

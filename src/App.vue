@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import HelloWorld from './components/HelloWorld.vue'
 import LoginForm from './components/LoginForm.vue'
 import ThemeToggle from './components/ThemeToggle.vue'
 import ChartsView from './components/ChartsView.vue'
