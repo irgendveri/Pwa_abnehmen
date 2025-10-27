@@ -1,0 +1,48 @@
+{
+  "name": "Abnehm-Tracker",
+  "short_name": "Abnehm-Tracker",
+  "description": "Eine PWA zum Tracken von Gewicht und Körpermaßen",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#4ECDC4",
+  "orientation": "any",
+  "scope": "/",
+  "categories": ["health", "fitness", "lifestyle"],
+  "icons": [
+    {
+      "src": "vite.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "display_override": ["window-controls-overlay", "standalone"],
+  "prefer_related_applications": false,
+  "shortcuts": [
+    {
+      "name": "Neue Messwerte",
+      "short_name": "Eingabe",
+      "description": "Neue Messwerte eingeben",
+      "url": "/",
+      "icons": [
+        {
+          "src": "vite.svg",
+          "sizes": "any"
+        }
+      ]
+    },
+    {
+      "name": "Charts anzeigen",
+      "short_name": "Charts",
+      "description": "Verlaufsdiagramme anzeigen",
+      "url": "/",
+      "icons": [
+        {
+          "src": "vite.svg",
+          "sizes": "any"
+        }
+      ]
+    }
+  ]
+}

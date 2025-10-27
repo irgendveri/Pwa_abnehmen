@@ -2,27 +2,29 @@
 import HelloWorld from './components/HelloWorld.vue'
 import LoginForm from './components/LoginForm.vue'
 import ThemeToggle from './components/ThemeToggle.vue'
-import DatabaseTest from './components/DatabaseTest.vue'
+import ChartsView from './components/ChartsView.vue'
+import WerteForm from './components/WerteForm.vue'
 import { useAuth } from './composables/useAuth'
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 
 const { user, loading, signOut } = useAuth()
 
 const isAuthenticated = computed(() => !!user.value)
+const refreshKey = ref(0)
+
+const handleWerteAdded = () => {
+  refreshKey.value++
+}
 </script>
 
 <template>
   <div>
     <header class="app-header">
+      <div class="app-title">
+        <h2>Hallo {{ user?.email }}</h2>
+      </div>
       <div class="header-controls">
         <ThemeToggle />
-        <div class="auth-status">
-          <p v-if="loading">Lade...</p>
-          <div v-else-if="isAuthenticated" class="user-info">
-            <p>Eingeloggt als: {{ user?.email }}</p>
-            <button @click="signOut" class="logout-btn">Ausloggen</button>
-          </div>
-        </div>
       </div>
     </header>
 
@@ -32,10 +34,20 @@ const isAuthenticated = computed(() => !!user.value)
       </div>
 
       <div v-else-if="isAuthenticated" class="app-content">
-        <HelloWorld msg="Willkommen in Ihrer Abnehm-App!" />
-        <DatabaseTest />
+        <!-- Formular zum Hinzufügen neuer Messwerte -->
+        <WerteForm @werte-added="handleWerteAdded" />
+
+        <!-- Diagramme für die Messwerte -->
+        <ChartsView :key="refreshKey" />
       </div>
     </main>
+  </div>
+  <div class="auth-status">
+    <p v-if="loading">Lade...</p>
+    <div v-else-if="isAuthenticated" class="user-info">
+      <p>Eingeloggt als: {{ user?.email }}</p>
+      <button @click="signOut" class="logout-btn">Ausloggen</button>
+    </div>
   </div>
 </template>
 
@@ -51,15 +63,55 @@ const isAuthenticated = computed(() => !!user.value)
   box-shadow: 0 2px 4px var(--shadow);
 }
 
-.app-header h1 {
+/* Desktop-optimized header */
+@media (min-width: 768px) {
+  .app-header {
+    padding: 0.75rem 1.5rem;
+    margin-bottom: 1.5rem;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+}
+
+.app-title h1 {
   margin: 0;
   color: var(--text-primary);
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+/* Desktop-optimized title */
+@media (min-width: 768px) {
+  .app-title h1 {
+    font-size: 1.25rem;
+  }
 }
 
 .header-controls {
   display: flex;
   align-items: center;
   gap: 1rem;
+}
+
+/* Desktop-optimized header controls */
+@media (min-width: 768px) {
+  .header-controls {
+    gap: 0.75rem;
+  }
+
+  .user-info {
+    gap: 0.75rem;
+  }
+
+  .user-info p {
+    font-size: 0.9rem;
+  }
+
+  .logout-btn {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.85rem;
+  }
 }
 
 .auth-status {
@@ -100,6 +152,19 @@ const isAuthenticated = computed(() => !!user.value)
   background-color: var(--bg-primary);
 }
 
+/* Desktop-optimized main content */
+@media (min-width: 768px) {
+  .app-main {
+    padding: 0 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .app-main {
+    padding: 0 1rem;
+  }
+}
+
 .login-section {
   display: flex;
   justify-content: center;
@@ -110,6 +175,16 @@ const isAuthenticated = computed(() => !!user.value)
 .app-content {
   max-width: 1200px;
   margin: 0 auto;
+}
+
+/* Desktop-optimized content layout */
+@media (min-width: 1200px) {
+  .app-content {
+    max-width: 1400px;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
 }
 
 .app-footer {

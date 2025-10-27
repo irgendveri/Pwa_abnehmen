@@ -12,7 +12,9 @@ export function useWerte() {
   // Alle Werte für den aktuellen Benutzer abrufen
   const fetchWerte = async () => {
     if (!user.value) {
-      error.value = 'Benutzer nicht angemeldet'
+      console.log('fetchWerte: Kein Benutzer gefunden')
+      error.value = null // Setze keinen Fehler wenn nur kein User da ist
+      werte.value = []
       return
     }
 
@@ -20,14 +22,63 @@ export function useWerte() {
     error.value = null
 
     try {
+      console.log('fetchWerte: Lade Daten für User ID:', user.value.id)
+
+      // Debug: Testen verschiedener Abfragen
+      console.log('=== DEBUG START ===')
+
+      // Test 1: Rohe Abfrage ohne Filter
+      const { data: allData, error: allError } = await supabase
+        .from('werte')
+        .select('*')
+        .limit(10)
+
+      console.log('Test 1 - Alle Daten:', { data: allData, error: allError })
+
+      // Test 2: Count-Abfrage
+      const { count, error: countError } = await supabase
+        .from('werte')
+        .select('*', { count: 'exact', head: true })
+
+      console.log('Test 2 - Count:', { count, error: countError })
+
+      // Test 3: Spezifische ID-Abfrage (von Screenshot)
+      const { data: specificData, error: specificError } = await supabase
+        .from('werte')
+        .select('*')
+        .eq('id', 2)
+
+      console.log('Test 3 - ID 2:', { data: specificData, error: specificError })
+
+      // Test 4: Auth-Status prüfen
+      const { data: { session } } = await supabase.auth.getSession()
+      console.log('Test 4 - Session:', {
+        hasSession: !!session,
+        userId: session?.user?.id,
+        userIdMatch: session?.user?.id === user.value.id
+      })
+
+      console.log('=== DEBUG ENDE ===')
+
+      if (allError) {
+        console.error('Fehler beim Laden aller Daten:', allError)
+      } else {
+        console.log('User IDs in DB:', allData?.map(item => item.Userid))
+      }
+
+      // Jetzt die normale Abfrage mit User-Filter
       const { data, error: fetchError } = await supabase
         .from('werte')
         .select('*')
         .eq('Userid', user.value.id)
         .order('wert_datum', { ascending: false })
 
-      if (fetchError) throw fetchError
+      if (fetchError) {
+        console.error('Supabase Fehler:', fetchError)
+        throw fetchError
+      }
 
+      console.log('fetchWerte: Gefilterte Daten erhalten:', data)
       werte.value = data as Werte[] || []
     } catch (err: unknown) {
       const errorMessage = err instanceof Error ? err.message : 'Ein unbekannter Fehler ist aufgetreten'
