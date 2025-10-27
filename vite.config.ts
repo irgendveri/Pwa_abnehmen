@@ -4,7 +4,7 @@ import vue from '@vitejs/plugin-vue'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [vue()],
-  base: process.env.NODE_ENV === 'production' ? '/pwa_abnehmen/' : '/',
+  base: process.env.NODE_ENV === 'production' ? '/Pwa_abnehmen/' : '/',
   build: {
     outDir: 'dist',
     assetsDir: 'assets',
