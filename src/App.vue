@@ -3,6 +3,7 @@ import LoginForm from './components/LoginForm.vue'
 import ThemeToggle from './components/ThemeToggle.vue'
 import ChartsView from './components/ChartsView.vue'
 import WerteForm from './components/WerteForm.vue'
+import WochenplanForm from './components/WochenplanForm.vue'
 import { useAuth } from './composables/useAuth'
 import { computed, ref } from 'vue'
 
@@ -35,6 +36,9 @@ const handleWerteAdded = () => {
       <div v-else-if="isAuthenticated" class="app-content">
         <!-- Formular zum Hinzufügen neuer Messwerte -->
         <WerteForm @werte-added="handleWerteAdded" />
+
+        <!-- Wochenplan für die Mahlzeitenplanung -->
+        <WochenplanForm />
 
         <!-- Diagramme für die Messwerte -->
         <ChartsView :key="refreshKey" />
