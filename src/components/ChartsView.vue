@@ -135,13 +135,13 @@ import { computed, onMounted, watch } from 'vue'
 import VueApexCharts from 'vue3-apexcharts'
 import type { ApexOptions } from 'apexcharts'
 import { useWerte } from '../composables/useWerte'
-import { useAuth } from '../composables/useAuth'
+import { useAuthStore } from '../stores/auth'
 import { useTheme } from '../composables/useTheme'
 
 // ApexCharts komponente registrieren
 const apexchart = VueApexCharts
 
-const { user, loading: authLoading } = useAuth()
+const { user, loading: authLoading } = useAuthStore()
 const { werte, loading, error, fetchWerte } = useWerte()
 const { isDark } = useTheme()
 

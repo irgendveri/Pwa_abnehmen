@@ -1,10 +1,10 @@
 import { ref, computed } from 'vue'
 import { supabase } from '../supabase'
 import type { Werte } from '../types/database'
-import { useAuth } from './useAuth'
+import { useAuthStore } from '../stores/auth'
 
 export function useWerte() {
-  const { user } = useAuth()
+  const { user } = useAuthStore()
   const loading = ref(false)
   const error = ref<string | null>(null)
   const werte = ref<Werte[]>([])

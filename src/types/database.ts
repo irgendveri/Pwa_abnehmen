@@ -22,12 +22,24 @@ export interface Wochenplan {
   Userid: string
 }
 
+export interface Ziele {
+  id: number
+  ziel_typ: number // 2 = Hauptziel, 1 = Zwischenziel
+  ziel_ziel: number // Gewichtsziel
+  ziel_datum: string // Zieldatum
+  created_at: string
+  Userid: string
+}
+
 // Input Types für neue Einträge
 export type WerteInsert = Omit<Werte, 'id' | 'created_at'>
 export type WerteUpdate = Partial<Omit<Werte, 'id' | 'created_at' | 'Userid'>>
 
 export type WochenplanInsert = Omit<Wochenplan, 'id' | 'created_at'>
 export type WochenplanUpdate = Partial<Omit<Wochenplan, 'id' | 'created_at' | 'Userid'>>
+
+export type ZieleInsert = Omit<Ziele, 'id' | 'created_at'>
+export type ZieleUpdate = Partial<Omit<Ziele, 'id' | 'created_at' | 'Userid'>>
 
 // Supabase Database Schema Type
 export interface Database {
@@ -42,6 +54,11 @@ export interface Database {
         Row: Wochenplan
         Insert: WochenplanInsert
         Update: WochenplanUpdate
+      }
+      ziele: {
+        Row: Ziele
+        Insert: ZieleInsert
+        Update: ZieleUpdate
       }
     }
   }

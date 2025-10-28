@@ -4,16 +4,26 @@ import ThemeToggle from './components/ThemeToggle.vue'
 import ChartsView from './components/ChartsView.vue'
 import WerteForm from './components/WerteForm.vue'
 import WochenplanForm from './components/WochenplanForm.vue'
-import { useAuth } from './composables/useAuth'
+import ZieleForm from './components/ZieleForm.vue'
+import { useAuthStore } from './stores/auth'
 import { computed, ref } from 'vue'
 
-const { user, loading, signOut } = useAuth()
+const { user, loading, signOut } = useAuthStore()
 
 const isAuthenticated = computed(() => !!user.value)
 const refreshKey = ref(0)
+const showZieleForm = ref(false)
 
 const handleWerteAdded = () => {
   refreshKey.value++
+}
+
+const openZieleForm = () => {
+  showZieleForm.value = true
+}
+
+const closeZieleForm = () => {
+  showZieleForm.value = false
 }
 </script>
 
@@ -49,9 +59,14 @@ const handleWerteAdded = () => {
     <p v-if="loading">Lade...</p>
     <div v-else-if="isAuthenticated" class="user-info">
       <p>Eingeloggt als: {{ user?.email }}</p>
+      <button @click="openZieleForm" class="goals-btn">Ziele definieren</button>
+
       <button @click="signOut" class="logout-btn">Ausloggen</button>
     </div>
   </div>
+
+  <!-- Ziele Form Modal -->
+  <ZieleForm v-if="showZieleForm" @close="closeZieleForm" />
 </template>
 
 <style scoped>
@@ -147,6 +162,21 @@ const handleWerteAdded = () => {
 
 .logout-btn:hover {
   background-color: #c82333;
+}
+
+.goals-btn {
+  padding: 0.5rem 1rem;
+  background-color: var(--accent-primary);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.2s ease;
+}
+
+.goals-btn:hover {
+  background-color: var(--accent-primary-hover);
 }
 
 .app-main {

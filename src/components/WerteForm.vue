@@ -123,10 +123,10 @@
 <script setup lang="ts">
 import { ref, reactive, computed } from 'vue'
 import { useWerte } from '../composables/useWerte'
-import { useAuth } from '../composables/useAuth'
+import { useAuthStore } from '../stores/auth'
 
 
-const { user } = useAuth()
+const { user } = useAuthStore()
 const { loading, error } = useWerte()
 
 const isAuthenticated = computed(() => !!user.value)

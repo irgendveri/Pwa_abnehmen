@@ -98,10 +98,10 @@
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted, watch } from 'vue'
 import { useWochenplan } from '../composables/useWochenplan'
-import { useAuth } from '../composables/useAuth'
+import { useAuthStore } from '../stores/auth'
 
-const { user } = useAuth()
-const { loading, error, fetchWochenplaene, addWochenplan, updateWochenplan } = useWochenplan()
+const { user } = useAuthStore()
+const { loading, fetchWochenplaene, addWochenplan, updateWochenplan } = useWochenplan()
 
 const isAuthenticated = computed(() => !!user.value)
 const successMessage = ref<string | null>(null)

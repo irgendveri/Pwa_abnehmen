@@ -123,11 +123,11 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { supabase } from '../supabase'
-import { useAuth } from '../composables/useAuth'
+import { useAuthStore } from '../stores/auth'
 import { useWerte } from '../composables/useWerte'
 import { useWochenplan } from '../composables/useWochenplan'
 
-const { user } = useAuth()
+const { user } = useAuthStore()
 
 // Connection Test
 const loading = ref(false)

@@ -49,9 +49,9 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useAuth } from '../composables/useAuth'
+import { useAuthStore } from '../stores/auth'
 
-const { signIn, signUp, loading } = useAuth()
+const { signIn, signUp, loading } = useAuthStore()
 
 const email = ref('')
 const password = ref('')
