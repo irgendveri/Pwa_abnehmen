@@ -77,8 +77,8 @@ const handleSubmit = async () => {
       await signUp(email.value, password.value)
       success.value = 'Registrierung erfolgreich! Bitte überprüfen Sie Ihre E-Mails.'
     }
-  } catch (err: any) {
-    error.value = err.message || 'Ein Fehler ist aufgetreten'
+  } catch (err: unknown) {
+    error.value = err instanceof Error ? err.message : 'Ein Fehler ist aufgetreten'
   }
 }
 </script>
