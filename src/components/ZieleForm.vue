@@ -7,14 +7,6 @@
       </div>
 
       <div class="modal-content">
-        <!-- Debug Info -->
-        <div class="debug-info" style="background: #f0f0f0; padding: 10px; margin-bottom: 1rem; border-radius: 4px;">
-          <small>
-            Debug: Loading: {{ loading }} |
-            Ziele count: {{ ziele.length }} |
-            Error: {{ error || 'None' }}
-          </small>
-        </div>
 
         <!-- Hauptziel Sektion -->
         <div class="ziel-section">

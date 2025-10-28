@@ -61,9 +61,6 @@
         </svg>
         {{ loading ? 'Laden...' : 'Daten neu laden' }}
       </button>
-      <div style="margin-top: 10px; font-size: 12px; color: #666;">
-        Debug: User: {{ user?.id }}, Werte: {{ werte.length }}, Loading: {{ loading }}, Error: {{ error }}
-      </div>
     </div>
 
     <div v-else-if="user && werte.length > 0" class="charts-grid">
