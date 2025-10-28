@@ -5,6 +5,7 @@ import ChartsView from './components/ChartsView.vue'
 import WerteForm from './components/WerteForm.vue'
 import WochenplanForm from './components/WochenplanForm.vue'
 import ZieleForm from './components/ZieleForm.vue'
+import MotivationBlock from './components/MotivationBlock.vue'
 import { useAuthStore } from './stores/auth'
 import { computed, ref } from 'vue'
 
@@ -44,6 +45,9 @@ const closeZieleForm = () => {
       </div>
 
       <div v-else-if="isAuthenticated" class="app-content">
+        <!-- Motivationsblock für täglich wechselnde Motivation -->
+        <MotivationBlock />
+
         <!-- Formular zum Hinzufügen neuer Messwerte -->
         <WerteForm @werte-added="handleWerteAdded" />
 
