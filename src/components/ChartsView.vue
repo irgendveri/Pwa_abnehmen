@@ -1,8 +1,8 @@
 <template>
   <div class="charts-container">
-    <h2>Messwerte Verlauf</h2>
+    <h3>Messwerte Verlauf</h3>
 
-    <div v-if="authLoading || loading" class="loading">
+    <div v-if="authLoading || loading">
       Lade Daten...
     </div>
 
@@ -14,8 +14,53 @@
       Fehler: {{ error }}
     </div>
 
-    <div v-else-if="werte.length === 0" class="no-data">
-      Keine Daten vorhanden. Bitte fügen Sie zuerst Messwerte hinzu.
+    <div v-else-if="werte.length === 0" >
+      <p>Keine Daten vorhanden. Bitte fügen Sie zuerst Messwerte hinzu.</p>
+      <button @click="loadData" class="reload-button" :disabled="loading">
+        <svg
+          class="reload-icon"
+          :class="{ spinning: loading }"
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <!-- Refresh icon mit zwei kreisförmigen Pfeilen -->
+          <path
+            d="M23 12C23 18.0751 18.0751 23 12 23C5.92487 23 1 18.0751 1 12C1 5.92487 5.92487 1 12 1C18.0751 1 23 5.92487 23 12Z"
+            stroke="currentColor"
+            stroke-width="2"
+            fill="none"
+          />
+          <!-- Oberer Pfeil -->
+          <path
+            d="M8 7L12 3L16 7"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            fill="none"
+          />
+          <!-- Unterer Pfeil -->
+          <path
+            d="M16 17L12 21L8 17"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            fill="none"
+          />
+          <!-- Mittlere Linie für bessere Sichtbarkeit -->
+          <path
+            d="M12 7V17"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+          />
+        </svg>
+        {{ loading ? 'Laden...' : 'Daten neu laden' }}
+      </button>
       <div style="margin-top: 10px; font-size: 12px; color: #666;">
         Debug: User: {{ user?.id }}, Werte: {{ werte.length }}, Loading: {{ loading }}, Error: {{ error }}
       </div>
@@ -446,8 +491,6 @@ const hasAnyChartData = computed(() =>
 <style scoped>
 .charts-container {
   padding: 20px;
-  max-width: 1400px;
-  margin: 0 auto;
 }
 
 /* Desktop layout optimization */
@@ -493,6 +536,71 @@ const hasAnyChartData = computed(() =>
   background-color: #fffbf0;
   color: #b7791f;
   border: 1px solid #f6d55c;
+}
+
+.no-data-container {
+  text-align: center;
+  padding: 40px;
+  font-size: 16px;
+  border-radius: 8px;
+  margin: 20px 0;
+  background-color: #fffbf0;
+  color: #b7791f;
+  border: 1px solid #f6d55c;
+}
+
+.no-data-container p {
+  margin-bottom: 20px;
+}
+
+.reload-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  background-color: var(--primary-color, #007bff);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.reload-button:hover:not(:disabled) {
+  background-color: var(--primary-color-dark, #0056b3);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.reload-button:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.reload-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.reload-icon {
+  transition: transform 0.3s ease;
+}
+
+.reload-icon.spinning {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .charts-grid {

@@ -1,11 +1,15 @@
 <template>
     <div class="werte-form">
-    <h3>Neue Messwerte hinzufügen</h3>
+    <div class="form-header" @click="toggleCollapse">
+      <h3>Neue Messwerte hinzufügen</h3>
+      <span class="collapse-icon" :class="{ 'collapsed': isCollapsed }">▼</span>
+    </div>
 
     <div v-if="!isAuthenticated" class="error-message">
       Sie müssen angemeldet sein, um Messwerte hinzuzufügen.
     </div>
 
+    <div class="form-content" :class="{ 'collapsed': isCollapsed }">
       <div class="form-group">
         <label for="datum">Datum:</label>
         <input
@@ -104,6 +108,7 @@
           Zurücksetzen
         </button>
       </div>
+    </div>
 
     <div v-if="error" class="error-message">
       {{ error }}
@@ -128,6 +133,9 @@ const isAuthenticated = computed(() => !!user.value)
 
 const successMessage = ref<string | null>(null)
 
+// Zustand für das Ein-/Ausklappen
+const isCollapsed = ref(true)
+
 // Heute als Standarddatum
 const today = new Date().toISOString().split('T')[0]
 
@@ -149,6 +157,10 @@ const resetForm = () => {
   formData.wert_po = 0
   formData.wert_oberschenkel = 0
   successMessage.value = null
+}
+
+const toggleCollapse = () => {
+  isCollapsed.value = !isCollapsed.value
 }
 
 </script>
@@ -177,12 +189,51 @@ const resetForm = () => {
   }
 }
 
+.form-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+  padding: 8px 0;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.form-header:hover {
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  padding: 8px 12px;
+  margin: -8px -12px 20px -12px;
+}
+
 .werte-form h3 {
-  margin: 0 0 20px 0;
+  margin: 0;
   color: #333;
   font-size: 20px;
   font-weight: 600;
-  text-align: center;
+}
+
+.collapse-icon {
+  font-size: 14px;
+  color: #666;
+  transition: transform 0.3s ease;
+}
+
+.collapse-icon.collapsed {
+  transform: rotate(-90deg);
+}
+
+.form-content {
+  overflow: hidden;
+  transition: max-height 0.3s ease-out, opacity 0.3s ease-out;
+  max-height: 1000px;
+  opacity: 1;
+}
+
+.form-content.collapsed {
+  max-height: 0;
+  opacity: 0;
 }
 
 .form {
@@ -350,6 +401,18 @@ const resetForm = () => {
 
   .werte-form h3 {
     color: #fff;
+  }
+
+  .form-header {
+    border-bottom-color: #555;
+  }
+
+  .form-header:hover {
+    background-color: #3a3a3a;
+  }
+
+  .collapse-icon {
+    color: #ccc;
   }
 
   .form-group label {
