@@ -10,16 +10,17 @@
     </div>
 
     <div class="form-content" :class="{ 'collapsed': isCollapsed }">
-      <div class="form-group">
-        <label for="datum">Datum:</label>
-        <input
-          id="datum"
-          v-model="formData.wert_datum"
-          type="date"
-          required
-          class="form-input"
-        />
-      </div>
+      <form @submit.prevent="submitForm">
+        <div class="form-group">
+          <label for="datum">Datum:</label>
+          <input
+            id="datum"
+            v-model="formData.wert_datum"
+            type="date"
+            required
+            class="form-input"
+          />
+        </div>
 
       <div class="form-group">
         <label for="gewicht">Gewicht (kg):</label>
@@ -29,9 +30,8 @@
           type="number"
           step="0.1"
           min="0"
-          required
           class="form-input"
-          placeholder="z.B. 75.5"
+          placeholder="z.B. 75.5 (optional)"
         />
       </div>
 
@@ -43,9 +43,8 @@
           type="number"
           step="0.1"
           min="0"
-          required
           class="form-input"
-          placeholder="z.B. 85.0"
+          placeholder="z.B. 85.0 (optional)"
         />
       </div>
 
@@ -57,9 +56,8 @@
           type="number"
           step="0.1"
           min="0"
-          required
           class="form-input"
-          placeholder="z.B. 90.5"
+          placeholder="z.B. 90.5 (optional)"
         />
       </div>
 
@@ -71,9 +69,8 @@
           type="number"
           step="0.1"
           min="0"
-          required
           class="form-input"
-          placeholder="z.B. 100.0"
+          placeholder="z.B. 100.0 (optional)"
         />
       </div>
 
@@ -85,29 +82,29 @@
           type="number"
           step="0.1"
           min="0"
-          required
           class="form-input"
-          placeholder="z.B. 55.5"
+          placeholder="z.B. 55.5 (optional)"
         />
       </div>
 
-      <div class="form-actions">
-        <button
-          type="submit"
-          :disabled="loading"
-          class="btn-primary"
-        >
-          {{ loading ? 'Speichert...' : 'Speichern' }}
-        </button>
+        <div class="form-actions">
+          <button
+            type="submit"
+            :disabled="loading"
+            class="btn-primary"
+          >
+            {{ loading ? 'Speichert...' : 'Speichern' }}
+          </button>
 
-        <button
-          type="button"
-          @click="resetForm"
-          class="btn-secondary"
-        >
-          Zurücksetzen
-        </button>
-      </div>
+          <button
+            type="button"
+            @click="resetForm"
+            class="btn-secondary"
+          >
+            Zurücksetzen
+          </button>
+        </div>
+      </form>
     </div>
 
     <div v-if="error" class="error-message">
@@ -116,6 +113,18 @@
 
     <div v-if="successMessage" class="success-message">
       {{ successMessage }}
+    </div>
+
+    <!-- Gratulations-Feuerwerk -->
+    <div v-if="showCelebration" class="celebration-container">
+      <div class="celebration-content">
+        <div class="fireworks-icon">🎉</div>
+        <div class="celebration-text">
+          <h2>Super, gratuliere!!! Du bist spitze!</h2>
+          <p>{{ celebrationMessage }}</p>
+        </div>
+        <div class="fireworks-icon">🎆</div>
+      </div>
     </div>
   </div>
 </template>
@@ -127,11 +136,14 @@ import { useAuthStore } from '../stores/auth'
 
 
 const { user } = useAuthStore()
-const { loading, error } = useWerte()
+const { loading, addWert } = useWerte()
 
 const isAuthenticated = computed(() => !!user.value)
 
 const successMessage = ref<string | null>(null)
+const showCelebration = ref(false)
+const celebrationMessage = ref('')
+const error = ref<string | null>(null)
 
 // Zustand für das Ein-/Ausklappen
 const isCollapsed = ref(true)
@@ -141,26 +153,104 @@ const today = new Date().toISOString().split('T')[0]
 
 const formData = reactive({
   wert_datum: today as string,
-  wert_gewicht: 0 as number,
-  wert_taille: 0 as number,
-  wert_bauch: 0 as number,
-  wert_po: 0 as number,
-  wert_oberschenkel: 0 as number
+  wert_gewicht: null as number | null,
+  wert_taille: null as number | null,
+  wert_bauch: null as number | null,
+  wert_po: null as number | null,
+  wert_oberschenkel: null as number | null
 })
 
 const resetForm = () => {
   const currentDate = new Date().toISOString().split('T')[0] as string
   formData.wert_datum = currentDate
-  formData.wert_gewicht = 0
-  formData.wert_taille = 0
-  formData.wert_bauch = 0
-  formData.wert_po = 0
-  formData.wert_oberschenkel = 0
+  formData.wert_gewicht = null
+  formData.wert_taille = null
+  formData.wert_bauch = null
+  formData.wert_po = null
+  formData.wert_oberschenkel = null
   successMessage.value = null
+  showCelebration.value = false
 }
 
 const toggleCollapse = () => {
   isCollapsed.value = !isCollapsed.value
+}
+
+const submitForm = async () => {
+  if (!isAuthenticated.value) {
+    return
+  }
+
+  // Fehler und Erfolg zurücksetzen
+  error.value = null
+  successMessage.value = null
+
+  // Validierung: Datum ist erforderlich und mindestens ein Messwert muss eingegeben werden
+  if (!formData.wert_datum) {
+    error.value = 'Bitte geben Sie ein Datum ein.'
+    return
+  }
+
+  // Prüfen ob mindestens ein Messwert eingegeben wurde
+  const hasAtLeastOneValue = (
+    (formData.wert_gewicht !== null && formData.wert_gewicht > 0) ||
+    (formData.wert_taille !== null && formData.wert_taille > 0) ||
+    (formData.wert_bauch !== null && formData.wert_bauch > 0) ||
+    (formData.wert_po !== null && formData.wert_po > 0) ||
+    (formData.wert_oberschenkel !== null && formData.wert_oberschenkel > 0)
+  )
+
+  if (!hasAtLeastOneValue) {
+    error.value = 'Bitte geben Sie mindestens einen Messwert ein.'
+    return
+  }
+
+  // Validieren, dass eingegebene Werte positiv sind
+  if ((formData.wert_gewicht !== null && formData.wert_gewicht <= 0) ||
+      (formData.wert_taille !== null && formData.wert_taille <= 0) ||
+      (formData.wert_bauch !== null && formData.wert_bauch <= 0) ||
+      (formData.wert_po !== null && formData.wert_po <= 0) ||
+      (formData.wert_oberschenkel !== null && formData.wert_oberschenkel <= 0)) {
+    error.value = 'Alle eingegebenen Messwerte müssen größer als 0 sein.'
+    return
+  }
+
+  try {
+    // Transformiere null-Werte zu 0 für die Datenbank
+    const dataToSend = {
+      wert_datum: formData.wert_datum,
+      wert_gewicht: formData.wert_gewicht || 0,
+      wert_taille: formData.wert_taille || 0,
+      wert_bauch: formData.wert_bauch || 0,
+      wert_po: formData.wert_po || 0,
+      wert_oberschenkel: formData.wert_oberschenkel || 0
+    }
+
+    const result = await addWert(dataToSend)
+
+    if (result) {
+      if (result.zielErreicht) {
+        // Zeige Feuerwerk-Gratulation
+        showCelebration.value = true
+        celebrationMessage.value = result.zielText
+        successMessage.value = 'Super, gratuliere!!! Du bist spitze!'
+
+        // Verstecke die Gratulation nach 5 Sekunden
+        setTimeout(() => {
+          showCelebration.value = false
+        }, 5000)
+      } else {
+        successMessage.value = 'Werte erfolgreich gespeichert!'
+      }
+
+      // Form nach erfolgreichem Speichern zurücksetzen
+      setTimeout(() => {
+        resetForm()
+      }, 3000)
+    }
+  } catch (err) {
+    console.error('Fehler beim Speichern:', err)
+  }
 }
 
 </script>
@@ -391,6 +481,92 @@ const toggleCollapse = () => {
   font-weight: 500;
 }
 
+.celebration-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  animation: celebrationFade 0.5s ease-in;
+}
+
+.celebration-content {
+  background: linear-gradient(135deg, #4ECDC4 0%, #44a08d 100%);
+  padding: 40px;
+  border-radius: 20px;
+  text-align: center;
+  color: white;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  max-width: 500px;
+  width: 90%;
+  animation: celebrationBounce 0.6s ease-out 0.2s both;
+}
+
+.fireworks-icon {
+  font-size: 60px;
+  margin: 10px;
+  animation: fireworksRotate 2s infinite;
+  display: inline-block;
+}
+
+.celebration-text h2 {
+  font-size: 28px;
+  font-weight: bold;
+  margin: 20px 0;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.celebration-text p {
+  font-size: 18px;
+  margin: 10px 0;
+  opacity: 0.9;
+}
+
+@keyframes celebrationFade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes celebrationBounce {
+  0% {
+    transform: scale(0.3) translateY(-100px);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.05) translateY(0);
+  }
+  70% {
+    transform: scale(0.95) translateY(0);
+  }
+  100% {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fireworksRotate {
+  0% {
+    transform: rotate(0deg) scale(1);
+  }
+  25% {
+    transform: rotate(90deg) scale(1.2);
+  }
+  50% {
+    transform: rotate(180deg) scale(1);
+  }
+  75% {
+    transform: rotate(270deg) scale(1.2);
+  }
+  100% {
+    transform: rotate(360deg) scale(1);
+  }
+}
+
 /* Dark mode support */
 @media (prefers-color-scheme: dark) {
   .werte-form {
@@ -438,6 +614,15 @@ const toggleCollapse = () => {
   .btn-secondary:hover {
     background: #4a4a4a;
     border-color: #666;
+    color: #fff;
+  }
+
+  .celebration-container {
+    background-color: rgba(0, 0, 0, 0.9);
+  }
+
+  .celebration-content {
+    background: linear-gradient(135deg, #2a5a5a 0%, #1a4a4a 100%);
     color: #fff;
   }
 }
