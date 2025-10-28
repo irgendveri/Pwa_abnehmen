@@ -11,7 +11,19 @@
   "categories": ["health", "fitness", "lifestyle"],
   "icons": [
     {
-      "src": "vite.svg",
+      "src": "logo-192.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "logo-512.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "logo.svg",
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "any maskable"
@@ -27,7 +39,7 @@
       "url": "/",
       "icons": [
         {
-          "src": "vite.svg",
+          "src": "logo.svg",
           "sizes": "any"
         }
       ]
@@ -39,7 +51,7 @@
       "url": "/",
       "icons": [
         {
-          "src": "vite.svg",
+          "src": "logo.svg",
           "sizes": "any"
         }
       ]

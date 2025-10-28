@@ -192,7 +192,6 @@ defineEmits<{
 }>()
 
 const {
-  ziele,
   hauptziel,
   zwischenziele,
   loading,

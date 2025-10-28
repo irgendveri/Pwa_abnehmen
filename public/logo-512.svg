@@ -1,0 +1,20 @@
+<svg width="512" height="512" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Hintergrund -->
+  <rect width="200" height="200" rx="40" ry="40" fill="#A7DED0" stroke="#4ECDC4" stroke-width="8"/>
+  
+  <!-- Waage Basis -->
+  <path d="M40 60 Q40 50 50 50 L150 50 Q160 50 160 60 L160 130 Q160 140 150 140 L50 140 Q40 140 40 130 Z" fill="#4ECDC4" stroke="#3BB3A8" stroke-width="3"/>
+  
+  <!-- Waage Display -->
+  <ellipse cx="100" cy="85" rx="25" ry="15" fill="white" stroke="#3BB3A8" stroke-width="2"/>
+  <path d="M85 85 Q100 70 115 85" fill="none" stroke="#3BB3A8" stroke-width="3" stroke-linecap="round"/>
+  
+  <!-- Bergform (Gewichtsverlauf) -->
+  <path d="M70 100 L85 115 L100 105 L130 125" fill="none" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  
+  <!-- Pfeil nach unten -->
+  <g transform="translate(150, 120)">
+    <line x1="0" y1="0" x2="0" y2="30" stroke="#4ECDC4" stroke-width="6" stroke-linecap="round"/>
+    <path d="M-8 22 L0 30 L8 22" fill="#4ECDC4" stroke="#4ECDC4" stroke-width="2" stroke-linejoin="round"/>
+  </g>
+</svg>

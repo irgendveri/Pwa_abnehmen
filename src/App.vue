@@ -32,6 +32,7 @@ const closeZieleForm = () => {
   <div>
     <header class="app-header">
       <div class="app-title">
+        <img src="/logo.svg" alt="Abnehm-Tracker Logo" class="app-logo" />
         <h2>Hallo {{ user?.email }}</h2>
       </div>
       <div class="header-controls">
@@ -96,7 +97,19 @@ const closeZieleForm = () => {
   }
 }
 
-.app-title h1 {
+.app-title {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.app-logo {
+  height: 40px;
+  width: 40px;
+}
+
+.app-title h1,
+.app-title h2 {
   margin: 0;
   color: var(--text-primary);
   font-size: 1.5rem;
@@ -105,7 +118,13 @@ const closeZieleForm = () => {
 
 /* Desktop-optimized title */
 @media (min-width: 768px) {
-  .app-title h1 {
+  .app-logo {
+    height: 32px;
+    width: 32px;
+  }
+
+  .app-title h1,
+  .app-title h2 {
     font-size: 1.25rem;
   }
 }
