@@ -31,6 +31,32 @@ export interface Ziele {
   Userid: string
 }
 
+// Lungenfunktions-Tabellen
+export interface Basisdaten {
+  id: number
+  datum: string
+  groesse_cm: number | null
+  gewicht_kg: number | null
+  gesamt_soll_prozent: number | null
+  messung_kh: boolean
+  created_at: string
+}
+
+export interface Messungen {
+  id: number
+  basisdaten_id: number
+  parameter: string
+  soll: number | null
+  ugw: number | null
+  versuch_1: number | null
+  versuch_2: number | null
+  versuch_3: number | null
+  bester_versuch: number | null
+  soll_prozent: number | null
+  bemerkung: string | null
+  created_at: string
+}
+
 // Input Types für neue Einträge
 export type WerteInsert = Omit<Werte, 'id' | 'created_at'>
 export type WerteUpdate = Partial<Omit<Werte, 'id' | 'created_at' | 'Userid'>>
@@ -40,6 +66,12 @@ export type WochenplanUpdate = Partial<Omit<Wochenplan, 'id' | 'created_at' | 'U
 
 export type ZieleInsert = Omit<Ziele, 'id' | 'created_at'>
 export type ZieleUpdate = Partial<Omit<Ziele, 'id' | 'created_at' | 'Userid'>>
+
+export type BasisdatenInsert = Omit<Basisdaten, 'id' | 'created_at'>
+export type BasisdatenUpdate = Partial<Omit<Basisdaten, 'id' | 'created_at'>>
+
+export type MessungenInsert = Omit<Messungen, 'id' | 'created_at'>
+export type MessungenUpdate = Partial<Omit<Messungen, 'id' | 'created_at'>>
 
 // Supabase Database Schema Type
 export interface Database {
@@ -59,6 +91,16 @@ export interface Database {
         Row: Ziele
         Insert: ZieleInsert
         Update: ZieleUpdate
+      }
+      basisdaten: {
+        Row: Basisdaten
+        Insert: BasisdatenInsert
+        Update: BasisdatenUpdate
+      }
+      messungen: {
+        Row: Messungen
+        Insert: MessungenInsert
+        Update: MessungenUpdate
       }
     }
   }
