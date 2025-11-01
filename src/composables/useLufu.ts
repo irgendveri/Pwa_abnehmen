@@ -194,6 +194,7 @@ export function useLufu() {
         .select(`
           *,
           messungen (
+            id,
             parameter,
             soll,
             ugw,
@@ -210,6 +211,7 @@ export function useLufu() {
 
       return data as (Basisdaten & {
         messungen: {
+          id: number;
           parameter: string;
           soll: number | null;
           ugw: number | null;
@@ -225,6 +227,48 @@ export function useLufu() {
       error.value = errorMessage
       console.error('Fehler beim Laden der Basisdaten:', err)
       return []
+    } finally {
+      loading.value = false
+    }
+  }
+
+  // Einzelne Messung aktualisieren
+  const updateMessung = async (messungId: number, updateData: {
+    soll?: number | null
+    ugw?: number | null
+    versuch_1?: number | null
+    versuch_2?: number | null
+    versuch_3?: number | null
+    soll_prozent?: number | null
+  }) => {
+    loading.value = true
+    error.value = null
+
+    try {
+      // Berechne besten Wert neu, wenn Versuche geändert wurden
+      const versuche = [updateData.versuch_1, updateData.versuch_2, updateData.versuch_3]
+        .filter(v => v !== null && v !== undefined) as number[]
+
+      const besterVersuch = versuche.length > 0 ? Math.max(...versuche) : null
+
+      const { data: updatedMessung, error: updateError } = await supabase
+        .from('messungen')
+        .update({
+          ...updateData,
+          bester_versuch: besterVersuch
+        })
+        .eq('id', messungId)
+        .select()
+        .single()
+
+      if (updateError) throw updateError
+
+      return updatedMessung as Messungen
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Unbekannter Fehler'
+      error.value = errorMessage
+      console.error('Fehler beim Aktualisieren der Messung:', err)
+      return null
     } finally {
       loading.value = false
     }
@@ -286,6 +330,7 @@ export function useLufu() {
     saveBasisdaten,
     saveMessungen,
     saveLufuData,
-    loadBasisdaten
+    loadBasisdaten,
+    updateMessung
   }
 }
