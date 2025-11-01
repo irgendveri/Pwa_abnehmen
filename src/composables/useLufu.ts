@@ -178,6 +178,58 @@ export function useLufu() {
     }
   }
 
+  // Alle Basisdaten laden (nach Datum sortiert, neueste zuerst)
+  const loadBasisdaten = async () => {
+    if (!user.value?.id) {
+      error.value = 'Benutzer nicht authentifiziert'
+      return []
+    }
+
+    loading.value = true
+    error.value = null
+
+    try {
+      const { data, error: loadError } = await supabase
+        .from('basisdaten')
+        .select(`
+          *,
+          messungen (
+            parameter,
+            soll,
+            ugw,
+            versuch_1,
+            versuch_2,
+            versuch_3,
+            bester_versuch,
+            soll_prozent
+          )
+        `)
+        .order('datum', { ascending: false })
+
+      if (loadError) throw loadError
+
+      return data as (Basisdaten & {
+        messungen: {
+          parameter: string;
+          soll: number | null;
+          ugw: number | null;
+          versuch_1: number | null;
+          versuch_2: number | null;
+          versuch_3: number | null;
+          bester_versuch: number | null;
+          soll_prozent: number | null;
+        }[]
+      })[]
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Unbekannter Fehler'
+      error.value = errorMessage
+      console.error('Fehler beim Laden der Basisdaten:', err)
+      return []
+    } finally {
+      loading.value = false
+    }
+  }
+
   // Komplette Lufu-Daten speichern
   const saveLufuData = async (data: {
     datum: string
@@ -233,6 +285,7 @@ export function useLufu() {
     error,
     saveBasisdaten,
     saveMessungen,
-    saveLufuData
+    saveLufuData,
+    loadBasisdaten
   }
 }
