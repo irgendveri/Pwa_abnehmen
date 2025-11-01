@@ -113,6 +113,35 @@ const saveLufuData = async () => {
     return
   }
 
+  // Funktion zur Umrechnung von FEV1/FVC Werten
+  const convertFev1FvcValue = (value: number | null | string): number | null | string => {
+    if (value === null || value === '') return value
+    const numValue = typeof value === 'string' ? parseFloat(value) : value
+    if (isNaN(numValue)) return value
+    return numValue < 2 ? numValue * 100 : numValue
+  }
+
+  // Umrechnung der FEV1/FVC Werte in allen Arrays
+  const convertedMesswerte = lufuData.value.messwerte.map(messwert => ({
+    ...messwert,
+    fev1_fvc: convertFev1FvcValue(messwert.fev1_fvc)
+  }))
+
+  const convertedSollwerte = lufuData.value.sollwerte.map(sollwert => ({
+    ...sollwert,
+    fev1_fvc: convertFev1FvcValue(sollwert.fev1_fvc)
+  }))
+
+  const convertedSollProzentWerte = lufuData.value.sollProzentWerte.map(sollProzent => ({
+    ...sollProzent,
+    fev1_fvc: convertFev1FvcValue(sollProzent.fev1_fvc)
+  }))
+
+  const convertedUgwWerte = lufuData.value.ugwWerte.map(ugwWert => ({
+    ...ugwWert,
+    fev1_fvc: convertFev1FvcValue(ugwWert.fev1_fvc)
+  }))
+
   try {
     const result = await saveLufuToDatabase({
       datum: lufuData.value.datum,
@@ -120,10 +149,10 @@ const saveLufuData = async () => {
       gewicht: lufuData.value.gewicht,
       gesamtergebnis: lufuData.value.gesamtergebnis,
       messungKh: lufuData.value.messungKh,
-      messwerte: lufuData.value.messwerte,
-      sollwerte: lufuData.value.sollwerte,
-      sollProzentWerte: lufuData.value.sollProzentWerte,
-      ugwWerte: lufuData.value.ugwWerte
+      messwerte: convertedMesswerte,
+      sollwerte: convertedSollwerte,
+      sollProzentWerte: convertedSollProzentWerte,
+      ugwWerte: convertedUgwWerte
     })
 
     if (result) {
